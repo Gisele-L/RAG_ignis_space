@@ -1,0 +1,17 @@
+missao_id,fase,item,responsavel_id,responsavel_nome,prazo,status
+MSN-2026-014,Reserva de slot,Assinatura do contrato de lançamento - CLI-0001,COL-0007,Gustavo Ferraz Siqueira,2026-04-02,Concluído
+MSN-2026-014,Reserva de slot,Assinatura do contrato de lançamento - CLI-0004,COL-0007,Gustavo Ferraz Siqueira,2026-04-09,Concluído
+MSN-2026-014,Fit-check (D-45),Verificação de compatibilidade dimensional - CLI-0001,COL-0005,Otávio Guedes Nascimento,2026-08-06,Concluído
+MSN-2026-014,Fit-check (D-45),Verificação de compatibilidade dimensional - CLI-0004,COL-0005,Otávio Guedes Nascimento,2026-08-06,Agendado
+MSN-2026-014,Testes de compatibilidade (D-30),Teste de compatibilidade eletromagnética,COL-0009,Lucas Hideki Tanaka,2026-08-21,Pendente
+MSN-2026-014,Testes de compatibilidade (D-30),Teste de vibração e envelope dinâmico,COL-0004,Camila Rezende Duarte,2026-08-21,Pendente
+MSN-2026-014,Testes de compatibilidade (D-30),Aceitação do módulo de propulsão (lote PC-2026-011),COL-0004,Camila Rezende Duarte,2026-05-22,Concluído
+MSN-2026-014,Integração final (D-10),Integração ao dispenser de separação - CLI-0001,COL-0005,Otávio Guedes Nascimento,2026-09-10,Pendente
+MSN-2026-014,Integração final (D-10),Integração ao dispenser de separação - CLI-0004,COL-0005,Otávio Guedes Nascimento,2026-09-10,Pendente
+MSN-2026-014,Integração final (D-10),Confirmação de pagamento de 30% final - CLI-0001,COL-0003,André Luiz Barreto Correia,2026-09-10,Pendente
+MSN-2026-014,Integração final (D-10),Confirmação de pagamento de 30% final - CLI-0004,COL-0003,André Luiz Barreto Correia,2026-09-10,Pendente
+MSN-2026-014,Regulatório,Autorização de Lançamento emitida pela AEB,COL-0008,Renata Vasconcelos Pires,2026-08-25,Pendente
+MSN-2026-014,Regulatório,Apólice de seguro de lançamento contratada,COL-0008,Renata Vasconcelos Pires,2026-08-25,Pendente
+MSN-2026-014,Qualidade,Auditoria interna pré-lançamento (AS9100D),COL-0006,Patrícia Lemos Andrade,2026-09-05,Pendente
+MSN-2026-014,Janela de lançamento,Lançamento — Ignis Vector-1,COL-0005,Otávio Guedes Nascimento,2026-09-20,Pendente
+MSN-2026-014,Pós-missão,Relatório de confirmação de órbita alcançada,COL-0005,Otávio Guedes Nascimento,2026-09-27,Pendente

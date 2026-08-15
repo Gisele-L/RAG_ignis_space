@@ -1,0 +1,80 @@
+{
+  "api": {
+    "nome": "Ignis Track API",
+    "versao": "1.2",
+    "descricao": "API interna para consulta de posição orbital e status de telemetria dos satélites lançados pela Ignis Space, disponibilizada aos clientes com missão ativa.",
+    "base_url": "https://api.ignisspace.com.br/track/v1",
+    "autenticacao": "Bearer Token (emitido por cliente, escopo restrito à(s) missão(ões) contratada(s))"
+  },
+
+  "endpoints": [
+    {
+      "metodo": "GET",
+      "caminho": "/missoes/{missao_id}",
+      "descricao": "Retorna os dados gerais de uma missão, incluindo cargas associadas.",
+      "parametros": [
+        { "nome": "missao_id", "tipo": "string", "local": "path", "exemplo": "MSN-2026-014" }
+      ],
+      "resposta_exemplo": {
+        "missao_id": "MSN-2026-014",
+        "status": "Confirmada",
+        "data_lancamento_prevista": "2026-09-20",
+        "orbita": "SSO",
+        "altitude_km": 550
+      }
+    },
+    {
+      "metodo": "GET",
+      "caminho": "/missoes/{missao_id}/telemetria",
+      "descricao": "Retorna a série histórica de telemetria da missão (posição, velocidade, status do satélite).",
+      "parametros": [
+        { "nome": "missao_id", "tipo": "string", "local": "path", "exemplo": "MSN-2025-009" },
+        { "nome": "desde", "tipo": "string (ISO 8601)", "local": "query", "obrigatorio": false },
+        { "nome": "ate", "tipo": "string (ISO 8601)", "local": "query", "obrigatorio": false }
+      ],
+      "resposta_exemplo": {
+        "missao_id": "MSN-2025-009",
+        "registros": [
+          { "timestamp_utc": "2025-11-10T09:12:45Z", "altitude_km": 550.0, "velocidade_kmh": 27400.0, "status": "Nominal" }
+        ]
+      }
+    },
+    {
+      "metodo": "GET",
+      "caminho": "/clientes/{cliente_id}/cargas",
+      "descricao": "Retorna todas as cargas (satélites) associadas a um cliente, com status de integração e missão vinculada.",
+      "parametros": [
+        { "nome": "cliente_id", "tipo": "string", "local": "path", "exemplo": "CLI-0001" }
+      ],
+      "resposta_exemplo": {
+        "cliente_id": "CLI-0001",
+        "cargas": [
+          { "missao_id": "MSN-2026-014", "tipo_carga": "CubeSat 6U", "massa_kg": 9.6, "status_integracao": "Fit-check concluído" }
+        ]
+      }
+    },
+    {
+      "metodo": "GET",
+      "caminho": "/missoes/{missao_id}/status-orbital",
+      "descricao": "Retorna o status orbital mais recente disponível para a missão (posição em tempo quase-real, quando o satélite está ativo).",
+      "parametros": [
+        { "nome": "missao_id", "tipo": "string", "local": "path", "exemplo": "MSN-2025-009" }
+      ],
+      "resposta_exemplo": {
+        "missao_id": "MSN-2025-009",
+        "ultima_atualizacao_utc": "2025-11-17T09:12:00Z",
+        "altitude_km": 549.7,
+        "status": "Órbita estável"
+      }
+    }
+  ],
+
+  "codigos_erro": [
+    { "codigo": 401, "significado": "Token inválido ou expirado" },
+    { "codigo": 403, "significado": "Cliente sem escopo de acesso para a missão solicitada" },
+    { "codigo": 404, "significado": "Missão ou cliente não encontrado" },
+    { "codigo": 429, "significado": "Limite de requisições excedido (rate limit: 60 req/min por token)" }
+  ],
+
+  "observacoes": "Esta API é disponibilizada apenas para clientes com contrato de lançamento ativo ou concluído. O acesso é restrito por escopo de token às missões associadas ao cliente autenticado."
+}

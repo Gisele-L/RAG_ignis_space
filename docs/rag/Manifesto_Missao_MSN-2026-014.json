@@ -1,0 +1,57 @@
+{
+  "missao": {
+    "id": "MSN-2026-014",
+    "nome_operacional": "Ignis Vector-1 — Missão Rideshare SSO Q3/2026",
+    "veiculo_lancador": "Ignis Vector-1",
+    "orbita": "Heliossíncrona (SSO)",
+    "altitude_km": 550,
+    "data_lancamento_prevista": "2026-09-20",
+    "status": "Confirmada",
+    "local_lancamento": "Centro de Lançamento (fictício) — Alcântara, MA"
+  },
+
+  "descricao": "Missão rideshare que compartilha capacidade de lançamento entre duas cargas de clientes distintos da Ignis Space. Esta missão é o mesmo lançamento referenciado no Contrato IGN-LAU-2026-0143 (Nebula Geodata) e no Contrato IGN-LAU-2026-0144 (Litoral Blue).",
+
+  "cargas": [
+    {
+      "cliente_id": "CLI-0001",
+      "cliente_razao_social": "Nebula Geodata Pesquisas Ltda.",
+      "contrato_vinculado": "IGN-LAU-2026-0143",
+      "tipo_carga": "CubeSat 6U",
+      "massa_kg": 9.6,
+      "segmento_cliente": "Sensoriamento remoto e geodados agrícolas",
+      "status_integracao": "Fit-check concluído"
+    },
+    {
+      "cliente_id": "CLI-0004",
+      "cliente_razao_social": "Litoral Blue Oceanografia Ltda.",
+      "contrato_vinculado": "IGN-LAU-2026-0144",
+      "tipo_carga": "CubeSat 3U",
+      "massa_kg": 4.5,
+      "segmento_cliente": "Monitoramento oceânico e climático",
+      "status_integracao": "Fit-check agendado"
+    }
+  ],
+
+  "massa_total_kg": 14.1,
+  "massa_disponivel_bloco_base_kg": 50,
+
+  "equipe_responsavel": [
+    { "colaborador_id": "COL-0005", "nome": "Otávio Guedes Nascimento", "papel": "Head de Operações de Lançamento — responsável geral pela missão" },
+    { "colaborador_id": "COL-0004", "nome": "Camila Rezende Duarte", "papel": "Head de Engenharia de Propulsão — aceitação dos módulos de propulsão" },
+    { "colaborador_id": "COL-0009", "nome": "Lucas Hideki Tanaka", "papel": "Engenheiro de Aviônica Sênior — testes de compatibilidade eletromagnética" },
+    { "colaborador_id": "COL-0008", "nome": "Renata Vasconcelos Pires", "papel": "Compliance Regulatório — Autorização de Lançamento junto à AEB" }
+  ],
+
+  "fornecedores_envolvidos": [
+    { "fornecedor_id": "FOR-0001", "razao_social": "PropTech Componentes Aeroespaciais Ltda.", "item": "Módulos de propulsão a gás frio (PC-2026-011)" },
+    { "fornecedor_id": "FOR-0004", "razao_social": "Compósitos SJC Materiais Estruturais Ltda.", "item": "Estrutura de fibra de carbono do dispenser (PC-2026-014)" }
+  ],
+
+  "documentos_relacionados": [
+    "Contrato IGN-LAU-2026-0143",
+    "Contrato IGN-LAU-2026-0144",
+    "Relatório de Teste RTP-2026-0057",
+    "Checklist Pré-Lançamento MSN-2026-014"
+  ]
+}

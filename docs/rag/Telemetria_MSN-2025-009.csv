@@ -1,0 +1,12 @@
+missao_id,timestamp_utc,fase,altitude_km,velocidade_kmh,temperatura_c,tensao_bateria_v,status
+MSN-2025-009,2025-11-10T09:00:00Z,Contagem regressiva,0.0,0.0,24.1,28.4,Nominal
+MSN-2025-009,2025-11-10T09:05:00Z,Decolagem,1.2,412.0,26.8,28.3,Nominal
+MSN-2025-009,2025-11-10T09:07:30Z,Ascensão,48.6,3120.0,-12.4,28.1,Nominal
+MSN-2025-009,2025-11-10T09:10:15Z,Separação de estágio,118.3,7460.0,-34.7,27.9,Nominal
+MSN-2025-009,2025-11-10T09:12:00Z,Inserção orbital,542.0,27350.0,-41.2,27.8,Nominal
+MSN-2025-009,2025-11-10T09:12:45Z,Separação do CubeSat,550.0,27400.0,-42.0,8.9,Nominal
+MSN-2025-009,2025-11-10T09:14:00Z,Aquisição de sinal (primeiro contato),550.1,27398.0,-38.5,8.7,Nominal
+MSN-2025-009,2025-11-10T09:20:00Z,Órbita estável — checagem inicial,550.0,27401.0,-15.2,8.5,Nominal
+MSN-2025-009,2025-11-10T10:05:00Z,Órbita estável — 1ª passagem sobre estação terrena,549.8,27395.0,-8.4,8.4,Nominal
+MSN-2025-009,2025-11-10T11:38:00Z,Órbita estável — 2ª passagem sobre estação terrena,549.9,27397.0,2.1,8.3,Nominal
+MSN-2025-009,2025-11-17T09:12:00Z,Confirmação de órbita (D+7),549.7,27390.0,-5.6,8.2,Nominal — relatório pós-missão emitido
