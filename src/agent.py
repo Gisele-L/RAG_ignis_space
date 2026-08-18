@@ -6,7 +6,7 @@ import shutil
 
 from dotenv import load_dotenv
 
-from langchain_core.messages import HumanMessage
+from langchain_core.messages import HumanMessage, AIMessage
 from pathlib import Path
 from langchain_chroma import Chroma
 from langchain.chat_models import init_chat_model
@@ -713,9 +713,22 @@ it clearly as an inference.
 
 Identify the source documents used in the final answer.
 
-9. NO MEMORY
+9. CONVERSATION MEMORY
 
-Do not answer company-specific questions from model memory.
+Use the conversation history to understand follow-up questions,
+pronouns, omitted identifiers and references to earlier turns.
+
+Examples:
+
+- "E qual é o cliente?"
+- "E qual é o prazo?"
+- "Essa missão tem alguma pendência?"
+
+Conversation history is contextual memory only.
+
+For company-specific facts, always use the Ignis Space
+documentation. Do not treat a previous assistant answer as an
+authoritative source if the current question requires retrieval.
 
 10. DOCUMENT SAFETY
 
@@ -878,7 +891,7 @@ agent = create_deep_agent(
 
 
 # ============================================================
-# 13. CHAT INTERATIVO
+# 13. MEMÓRIA DE SESSÃO E CHAT INTERATIVO
 # ============================================================
 
 def get_final_response(result) -> str:
@@ -908,10 +921,62 @@ def get_final_response(result) -> str:
     )
 
 
+def ask_agent(
+    question: str,
+    conversation_history: list
+):
+    """
+    Executa uma pergunta usando o histórico da sessão.
+
+    O histórico contém apenas mensagens do usuário e as
+    respostas finais do agente. Mensagens internas de tools
+    e subagentes não são armazenadas na memória conversacional.
+    """
+
+    user_message = HumanMessage(
+        content=question
+    )
+
+    input_messages = (
+        conversation_history
+        + [user_message]
+    )
+
+    result = agent.invoke(
+        {
+            "messages": input_messages
+        }
+    )
+
+    final_response = (
+        get_final_response(
+            result
+        )
+    )
+
+    updated_history = (
+        conversation_history
+        + [
+            user_message,
+            AIMessage(
+                content=final_response
+            ),
+        ]
+    )
+
+    return (
+        final_response,
+        updated_history
+    )
+
+
 def run_chat():
     """
-    Executa uma sessão interativa no terminal.
+    Executa uma sessão interativa no terminal
+    com memória conversacional de curto prazo.
     """
+
+    conversation_history = []
 
     print()
     print("=" * 60)
@@ -921,6 +986,14 @@ def run_chat():
     print()
     print(
         "Faça perguntas sobre os documentos da Ignis Space."
+    )
+
+    print(
+        "O agente mantém o contexto durante esta sessão."
+    )
+
+    print(
+        "Digite 'limpar' para apagar a memória da conversa."
     )
 
     print(
@@ -956,11 +1029,13 @@ def run_chat():
         if not user_query:
             continue
 
+        command = user_query.lower()
+
         # ----------------------------------------------------
         # Comando de saída
         # ----------------------------------------------------
 
-        if user_query.lower() in {
+        if command in {
             "sair",
             "exit",
             "quit",
@@ -974,25 +1049,37 @@ def run_chat():
             break
 
         # ----------------------------------------------------
+        # Limpar memória da sessão
+        # ----------------------------------------------------
+
+        if command in {
+            "limpar",
+            "clear",
+            "reset",
+        }:
+
+            conversation_history = []
+
+            print()
+            print(
+                "Memória da conversa apagada."
+            )
+            print()
+
+            continue
+
+        # ----------------------------------------------------
         # Executar agente
         # ----------------------------------------------------
 
         try:
 
-            result = agent.invoke(
-                {
-                    "messages": [
-                        HumanMessage(
-                            content=user_query
-                        )
-                    ]
-                }
-            )
-
-            final_response = (
-                get_final_response(
-                    result
-                )
+            (
+                final_response,
+                conversation_history
+            ) = ask_agent(
+                user_query,
+                conversation_history
             )
 
             print()
