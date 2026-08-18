@@ -55,7 +55,11 @@ Gustavo Ferraz Siqueira atualizou a diretoria sobre o funil comercial:
 
 ## 3. Fluxo de caixa e runway
 
-André Luiz Barreto Correia apresentou a posição de caixa atual, destacando que os desembolsos com fornecedores (PropTech, SolarCell, AviônicaBR, Compósitos SJC) seguem dentro do orçamento planejado para a missão MSN-2026-014. Nenhum ponto de alerta de runway foi levantado nesta reunião.
+André Luiz Barreto Correia apresentou a posição de caixa atual, destacando que os desembolsos com fornecedores (PropTech, SolarCell, AviônicaBR, Compósitos SJC) seguem dentro do orçamento planejado para a missão MSN-2026-014.
+
+Apresentou também a projeção do 2º semestre (Planilha de Runway 2S2026): partindo de R$ 4.850.000,00 de caixa em 01/07/2026, com burn médio projetado de R$ 653.333,33/mês, o saldo ao fim de dezembro/2026 fica em R$ 3.561.125,00 — equivalente a **5,5 meses de runway**, abaixo da meta de 7 meses estabelecida no KR3.1 do trimestre. A projeção não considera eventual aporte da complementação da Série B.
+
+**Decisão:** manter o plano de desembolsos sem cortes neste momento, uma vez que as duas entradas relevantes do semestre (marcos contratuais de julho e setembro) já estão contratadas, e tratar a complementação da Série B como principal alavanca de recomposição de caixa. André apresentará cenário alternativo de contenção caso as tratativas com o Fundo Nacional de Inovação Aeroespacial não avancem até 30/09/2026.
 
 ## 4. Pauta de fechamento — Série B
 
@@ -72,6 +76,7 @@ Rafael Augusto Monteiro atualizou os presentes sobre as tratativas em andamento 
 | Reportar riscos de cronograma da MSN-2026-014 | Otávio Guedes Nascimento | 15/08/2026 |
 | Follow-up com TerraNova Mineração (ORC-2026-028) | Gustavo Ferraz Siqueira | 10/08/2026 |
 | Atualizar diretoria sobre tratativas da Série B | Rafael Augusto Monteiro | 19/08/2026 |
+| Apresentar cenário de contenção de caixa, caso a Série B não avance | André Luiz Barreto Correia | 30/09/2026 |
 
 ---
 
