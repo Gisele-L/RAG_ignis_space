@@ -1,5 +1,8 @@
 import re
 import uuid
+import hashlib
+import json
+import shutil
 
 from dotenv import load_dotenv
 
@@ -24,9 +27,139 @@ from load_documents import load_documents
 load_dotenv()
 
 PROJECT_DIR = Path(__file__).resolve().parent.parent
+DOCS_DIR = PROJECT_DIR / "docs"
 CHROMA_DIR = PROJECT_DIR / "chroma_db"
-INDEX_MARKER = CHROMA_DIR / ".ignis_index_ready"
+INDEX_STATE_FILE = PROJECT_DIR / ".ignis_index_state.json"
+
 COLLECTION_NAME = "ignis_space_documents"
+EMBEDDING_MODEL = "text-embedding-3-large"
+
+STANDARD_CHUNK_SIZE = 1000
+STANDARD_CHUNK_OVERLAP = 200
+
+EXCEL_CHUNK_SIZE = 4000
+EXCEL_CHUNK_OVERLAP = 500
+
+
+# ============================================================
+# CONTROLE DE VERSÃO DO CORPUS
+# ============================================================
+
+def calculate_corpus_fingerprint() -> str:
+    """Gera uma assinatura SHA-256 do corpus e da configuração."""
+
+    hasher = hashlib.sha256()
+
+    supported_extensions = {
+        ".pdf",
+        ".docx",
+        ".xlsx",
+        ".csv",
+        ".json",
+        ".md",
+        ".html",
+        ".pptx",
+    }
+
+    files = sorted(
+        file_path
+        for file_path in DOCS_DIR.rglob("*")
+        if (
+            file_path.is_file()
+            and file_path.suffix.lower()
+            in supported_extensions
+        )
+    )
+
+    configuration = {
+        "embedding_model": EMBEDDING_MODEL,
+        "standard_chunk_size": STANDARD_CHUNK_SIZE,
+        "standard_chunk_overlap": STANDARD_CHUNK_OVERLAP,
+        "excel_chunk_size": EXCEL_CHUNK_SIZE,
+        "excel_chunk_overlap": EXCEL_CHUNK_OVERLAP,
+    }
+
+    hasher.update(
+        json.dumps(
+            configuration,
+            sort_keys=True,
+        ).encode("utf-8")
+    )
+
+    for file_path in files:
+
+        relative_path = file_path.relative_to(
+            DOCS_DIR
+        )
+
+        hasher.update(
+            str(relative_path).encode("utf-8")
+        )
+
+        with open(
+            file_path,
+            "rb",
+        ) as file:
+
+            while True:
+
+                block = file.read(
+                    1024 * 1024
+                )
+
+                if not block:
+                    break
+
+                hasher.update(block)
+
+    return hasher.hexdigest()
+
+
+def load_previous_fingerprint() -> str | None:
+    """Lê o fingerprint usado na última indexação."""
+
+    if not INDEX_STATE_FILE.exists():
+        return None
+
+    try:
+        data = json.loads(
+            INDEX_STATE_FILE.read_text(
+                encoding="utf-8"
+            )
+        )
+
+        return data.get(
+            "fingerprint"
+        )
+
+    except (
+        json.JSONDecodeError,
+        OSError,
+    ):
+        return None
+
+
+def save_index_state(
+    fingerprint: str,
+    chunk_count: int,
+):
+    """Salva o estado da última indexação."""
+
+    state = {
+        "fingerprint": fingerprint,
+        "collection_name": COLLECTION_NAME,
+        "embedding_model": EMBEDDING_MODEL,
+        "chunk_count": chunk_count,
+    }
+
+    INDEX_STATE_FILE.write_text(
+        json.dumps(
+            state,
+            ensure_ascii=False,
+            indent=2,
+        ),
+        encoding="utf-8",
+    )
 
 
 # ============================================================
@@ -55,13 +188,13 @@ print()
 print("Dividindo documentos em chunks...")
 
 standard_splitter = RecursiveCharacterTextSplitter(
-    chunk_size=1000,
-    chunk_overlap=200,
+    chunk_size=STANDARD_CHUNK_SIZE,
+    chunk_overlap=STANDARD_CHUNK_OVERLAP,
 )
 
 excel_splitter = RecursiveCharacterTextSplitter(
-    chunk_size=4000,
-    chunk_overlap=500,
+    chunk_size=EXCEL_CHUNK_SIZE,
+    chunk_overlap=EXCEL_CHUNK_OVERLAP,
 )
 
 all_splits = []
@@ -99,7 +232,7 @@ print(f"Chunks gerados: {len(all_splits)}")
 # ============================================================
 
 embeddings = OpenAIEmbeddings(
-    model="text-embedding-3-large"
+    model=EMBEDDING_MODEL
 )
 
 
@@ -108,18 +241,64 @@ embeddings = OpenAIEmbeddings(
 # ============================================================
 
 print()
-print("Inicializando VectorStore persistente...")
+print("Verificando índice vetorial...")
 
-vector_store = Chroma(
-    collection_name=COLLECTION_NAME,
-    embedding_function=embeddings,
-    persist_directory=str(CHROMA_DIR),
+current_fingerprint = (
+    calculate_corpus_fingerprint()
 )
 
-if not INDEX_MARKER.exists():
+previous_fingerprint = (
+    load_previous_fingerprint()
+)
 
-    print("Índice ainda não encontrado.")
-    print("Gerando embeddings e indexando documentos...")
+index_exists = CHROMA_DIR.exists()
+
+corpus_changed = (
+    current_fingerprint
+    != previous_fingerprint
+)
+
+needs_rebuild = (
+    not index_exists
+    or corpus_changed
+)
+
+
+# ============================================================
+# RECONSTRUIR ÍNDICE
+# ============================================================
+
+if needs_rebuild:
+
+    if not index_exists:
+
+        print(
+            "Índice vetorial ainda não existe."
+        )
+
+    elif corpus_changed:
+
+        print(
+            "Alterações detectadas nos documentos "
+            "ou na configuração do RAG."
+        )
+
+        print(
+            "Reconstruindo índice vetorial..."
+        )
+
+        shutil.rmtree(
+            CHROMA_DIR,
+            ignore_errors=True,
+        )
+
+    vector_store = Chroma(
+        collection_name=COLLECTION_NAME,
+        embedding_function=embeddings,
+        persist_directory=str(
+            CHROMA_DIR
+        ),
+    )
 
     for document in all_splits:
 
@@ -127,46 +306,63 @@ if not INDEX_MARKER.exists():
             "prompt_injection_matches"
         )
 
-        if isinstance(matches, list):
+        if isinstance(
+            matches,
+            list,
+        ):
 
             document.metadata[
                 "prompt_injection_matches"
             ] = ", ".join(matches)
 
+    print(
+        "Gerando embeddings e "
+        "indexando documentos..."
+    )
+
     vector_store.add_documents(
         documents=all_splits
     )
 
-    CHROMA_DIR.mkdir(
-        parents=True,
-        exist_ok=True
-    )
-
-    INDEX_MARKER.write_text(
-        "Ignis Space vector index ready.",
-        encoding="utf-8"
+    save_index_state(
+        fingerprint=current_fingerprint,
+        chunk_count=len(all_splits),
     )
 
     print(
-        f"Chunks indexados: {len(all_splits)}"
+        f"Chunks indexados: "
+        f"{len(all_splits)}"
     )
 
     print(
-        f"Banco vetorial salvo em: {CHROMA_DIR}"
+        "Novo índice vetorial salvo."
     )
+
+
+# ============================================================
+# REUTILIZAR ÍNDICE
+# ============================================================
 
 else:
 
+    vector_store = Chroma(
+        collection_name=COLLECTION_NAME,
+        embedding_function=embeddings,
+        persist_directory=str(
+            CHROMA_DIR
+        ),
+    )
+
     print(
-        "Índice vetorial existente encontrado."
+        "Nenhuma alteração detectada."
+    )
+
+    print(
+        "Índice vetorial existente será reutilizado."
     )
 
     print(
         "Embeddings não serão recriados."
-    )
-
-    print(
-        f"Banco vetorial: {CHROMA_DIR}"
     )
 
 
