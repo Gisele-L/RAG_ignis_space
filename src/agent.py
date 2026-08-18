@@ -878,14 +878,141 @@ agent = create_deep_agent(
 
 
 # ============================================================
-# 13. TESTE
+# 13. CHAT INTERATIVO
 # ============================================================
 
-EXAMPLE_QUERY = (
-    "Quais são os principais riscos operacionais, "
-    "técnicos e de qualidade identificados nos "
-    "documentos da Ignis Space?"
-)
+def get_final_response(result) -> str:
+    """
+    Extrai somente a resposta textual final do agente.
+    """
+
+    messages = result.get(
+        "messages",
+        []
+    )
+
+    for msg in reversed(messages):
+
+        text = getattr(
+            msg,
+            "text",
+            None
+        )
+
+        if text:
+            return text
+
+    return (
+        "Não foi possível obter "
+        "uma resposta final do agente."
+    )
+
+
+def run_chat():
+    """
+    Executa uma sessão interativa no terminal.
+    """
+
+    print()
+    print("=" * 60)
+    print("IGNIS SPACE — RAG AGENT")
+    print("=" * 60)
+
+    print()
+    print(
+        "Faça perguntas sobre os documentos da Ignis Space."
+    )
+
+    print(
+        "Digite 'sair' para encerrar."
+    )
+
+    print()
+
+    while True:
+
+        try:
+
+            user_query = input(
+                "Você: "
+            ).strip()
+
+        except (
+            KeyboardInterrupt,
+            EOFError
+        ):
+
+            print()
+            print(
+                "Encerrando agente..."
+            )
+
+            break
+
+        # ----------------------------------------------------
+        # Entrada vazia
+        # ----------------------------------------------------
+
+        if not user_query:
+            continue
+
+        # ----------------------------------------------------
+        # Comando de saída
+        # ----------------------------------------------------
+
+        if user_query.lower() in {
+            "sair",
+            "exit",
+            "quit",
+        }:
+
+            print()
+            print(
+                "Encerrando agente..."
+            )
+
+            break
+
+        # ----------------------------------------------------
+        # Executar agente
+        # ----------------------------------------------------
+
+        try:
+
+            result = agent.invoke(
+                {
+                    "messages": [
+                        HumanMessage(
+                            content=user_query
+                        )
+                    ]
+                }
+            )
+
+            final_response = (
+                get_final_response(
+                    result
+                )
+            )
+
+            print()
+            print("Agente:")
+            print()
+            print(
+                final_response
+            )
+            print()
+
+        except Exception as error:
+
+            print()
+            print(
+                "Erro ao executar o agente:"
+            )
+            print(
+                error
+            )
+            print()
 
 
 # ============================================================
@@ -893,49 +1020,4 @@ EXAMPLE_QUERY = (
 # ============================================================
 
 if __name__ == "__main__":
-
-    print()
-    print("=" * 60)
-    print("EXECUTANDO AGENTE IGNIS SPACE")
-    print("=" * 60)
-    print()
-
-    result = agent.invoke(
-        {
-            "messages": [
-                HumanMessage(
-                    content=EXAMPLE_QUERY
-                )
-            ]
-        }
-    )
-
-    messages = result.get(
-        "messages",
-        []
-    )
-
-    final_text = None
-
-    for msg in reversed(messages):
-        if getattr(
-            msg,
-            "text",
-            None
-        ):
-            final_text = msg.text
-            break
-
-    print()
-    print("=" * 60)
-    print("RESPOSTA DO AGENTE")
-    print("=" * 60)
-    print()
-
-    if final_text:
-        print(final_text)
-    else:
-        print(
-            "Não foi possível obter uma resposta final "
-            "do agente."
-        )
+    run_chat()
