@@ -4,7 +4,8 @@ import uuid
 from dotenv import load_dotenv
 
 from langchain_core.messages import HumanMessage
-from langchain_core.vectorstores import InMemoryVectorStore
+from pathlib import Path
+from langchain_chroma import Chroma
 from langchain.chat_models import init_chat_model
 from langchain.tools import tool
 from langchain_openai import OpenAIEmbeddings
@@ -21,6 +22,11 @@ from load_documents import load_documents
 # ============================================================
 
 load_dotenv()
+
+PROJECT_DIR = Path(__file__).resolve().parent.parent
+CHROMA_DIR = PROJECT_DIR / "chroma_db"
+INDEX_MARKER = CHROMA_DIR / ".ignis_index_ready"
+COLLECTION_NAME = "ignis_space_documents"
 
 
 # ============================================================
@@ -98,20 +104,70 @@ embeddings = OpenAIEmbeddings(
 
 
 # ============================================================
-# 4. VECTOR STORE
+# 4. VECTOR STORE PERSISTENTE — CHROMA
 # ============================================================
 
-vector_store = InMemoryVectorStore(
-    embeddings
+print()
+print("Inicializando VectorStore persistente...")
+
+vector_store = Chroma(
+    collection_name=COLLECTION_NAME,
+    embedding_function=embeddings,
+    persist_directory=str(CHROMA_DIR),
 )
 
-print("Indexando chunks no VectorStore...")
+if not INDEX_MARKER.exists():
 
-vector_store.add_documents(
-    documents=all_splits
-)
+    print("Índice ainda não encontrado.")
+    print("Gerando embeddings e indexando documentos...")
 
-print(f"Chunks indexados: {len(all_splits)}")
+    for document in all_splits:
+
+        matches = document.metadata.get(
+            "prompt_injection_matches"
+        )
+
+        if isinstance(matches, list):
+
+            document.metadata[
+                "prompt_injection_matches"
+            ] = ", ".join(matches)
+
+    vector_store.add_documents(
+        documents=all_splits
+    )
+
+    CHROMA_DIR.mkdir(
+        parents=True,
+        exist_ok=True
+    )
+
+    INDEX_MARKER.write_text(
+        "Ignis Space vector index ready.",
+        encoding="utf-8"
+    )
+
+    print(
+        f"Chunks indexados: {len(all_splits)}"
+    )
+
+    print(
+        f"Banco vetorial salvo em: {CHROMA_DIR}"
+    )
+
+else:
+
+    print(
+        "Índice vetorial existente encontrado."
+    )
+
+    print(
+        "Embeddings não serão recriados."
+    )
+
+    print(
+        f"Banco vetorial: {CHROMA_DIR}"
+    )
 
 
 # ============================================================
