@@ -13,24 +13,24 @@ linguagem para sintetizar respostas fundamentadas no corpus.
 O projeto foi desenvolvido para explorar, de forma incremental,
 conceitos como:
 
--   ingestão multimodal de documentos;
--   normalização de metadados;
--   divisão de documentos em chunks;
--   embeddings;
--   busca vetorial;
--   recuperação por identificadores;
--   recuperação multi-fonte;
--   agentes e subagentes;
--   persistência do índice vetorial;
--   detecção de alterações no corpus;
--   reconstrução automática do índice;
--   interação com o agente pelo terminal.
+- ingestão multimodal de documentos;
+- normalização de metadados;
+- divisão de documentos em chunks;
+- embeddings;
+- busca vetorial;
+- recuperação por identificadores;
+- recuperação multi-fonte;
+- agentes e subagentes;
+- persistência do índice vetorial;
+- detecção de alterações no corpus;
+- reconstrução automática do índice;
+- interação com o agente pelo terminal.
 
 ## Arquitetura
 
 Fluxo simplificado:
 
-``` text
+```text
 docs/
   │
   ▼
@@ -75,7 +75,7 @@ Resposta ao usuário
 
 ## Estrutura do projeto
 
-``` text
+```text
 RAG_Ignis_Space/
 │
 ├── docs/
@@ -84,6 +84,9 @@ RAG_Ignis_Space/
 │   ├── missoes/
 │   ├── qualidade/
 │   └── tecnico/
+│
+├── notebooks/
+│   └── demo_rag_ignis_space.ipynb
 │
 ├── src/
 │   ├── agent.py
@@ -109,10 +112,10 @@ Propostas comerciais, orçamentos e tabelas de preços.
 
 Exemplos:
 
--   `Orcamento_ORC-2026-028_TerraNova_Mineracao.xlsx`
--   `Orcamento_ORC-2026-031_Amazonia_Clima.xlsx`
--   `Orcamento_ORC-2026-033_UFLS.xlsx`
--   `Tabela_Precos_Ignis_Space.xlsx`
+- `Orcamento_ORC-2026-028_TerraNova_Mineracao.xlsx`
+- `Orcamento_ORC-2026-031_Amazonia_Clima.xlsx`
+- `Orcamento_ORC-2026-033_UFLS.xlsx`
+- `Tabela_Precos_Ignis_Space.xlsx`
 
 ### Gestão
 
@@ -120,10 +123,10 @@ Documentos estratégicos e gerenciais.
 
 Exemplos:
 
--   atas de reunião;
--   OKRs;
--   pitch deck;
--   plano de expansão internacional.
+- atas de reunião;
+- OKRs;
+- pitch deck;
+- plano de expansão internacional.
 
 ### Missões
 
@@ -131,10 +134,10 @@ Documentação operacional relacionada às missões espaciais.
 
 Exemplos:
 
--   checklist pré-lançamento;
--   manifesto de missão;
--   roadmap;
--   telemetria.
+- checklist pré-lançamento;
+- manifesto de missão;
+- roadmap;
+- telemetria.
 
 ### Qualidade
 
@@ -142,10 +145,10 @@ Documentos relacionados à gestão da qualidade e AS9100.
 
 Exemplos:
 
--   auditorias internas;
--   planos de ação corretiva;
--   política de segurança operacional;
--   procedimentos de controle de qualidade.
+- auditorias internas;
+- planos de ação corretiva;
+- política de segurança operacional;
+- procedimentos de controle de qualidade.
 
 ### Técnico
 
@@ -153,10 +156,10 @@ Documentação de engenharia e integração.
 
 Exemplos:
 
--   especificações de API;
--   business cases técnicos;
--   manuais de integração;
--   relatórios de testes de propulsão.
+- especificações de API;
+- business cases técnicos;
+- manuais de integração;
+- relatórios de testes de propulsão.
 
 ## Carregamento multimodal
 
@@ -165,11 +168,11 @@ O módulo `src/load_documents.py` é responsável por percorrer o diretório
 
 O carregamento preserva metadados úteis, como:
 
--   `source`;
--   `file_name`;
--   `file_type`;
--   nome da planilha, quando aplicável;
--   informações auxiliares de segurança documental.
+- `source`;
+- `file_name`;
+- `file_type`;
+- nome da planilha, quando aplicável;
+- informações auxiliares de segurança documental.
 
 A normalização dos metadados permite que o mecanismo de recuperação
 utilize tanto o conteúdo quanto informações sobre a origem do documento.
@@ -189,15 +192,15 @@ menores e sobreposição.
 Planilhas recebem chunks maiores para evitar separar informações que
 precisam permanecer juntas, principalmente:
 
--   número da proposta;
--   itens;
--   subtotal;
--   seguro;
--   valor total.
+- número da proposta;
+- itens;
+- subtotal;
+- seguro;
+- valor total.
 
 Essa estratégia foi importante para consultas como:
 
-``` text
+```text
 Qual é o valor total da proposta ORC-2026-028?
 ```
 
@@ -207,7 +210,7 @@ Os chunks são convertidos em vetores utilizando embeddings da OpenAI.
 
 Modelo configurado:
 
-``` text
+```text
 text-embedding-3-large
 ```
 
@@ -230,19 +233,19 @@ principais configurações de indexação.
 
 A assinatura considera:
 
--   arquivos do corpus;
--   conteúdo dos arquivos;
--   caminhos relativos;
--   modelo de embeddings;
--   tamanho dos chunks;
--   overlap dos chunks.
+- arquivos do corpus;
+- conteúdo dos arquivos;
+- caminhos relativos;
+- modelo de embeddings;
+- tamanho dos chunks;
+- overlap dos chunks.
 
 Na inicialização, o sistema compara o fingerprint atual com o
 fingerprint utilizado na última indexação.
 
 Fluxo:
 
-``` text
+```text
 Inicialização
      │
      ▼
@@ -266,7 +269,7 @@ nas perguntas.
 
 Entre os padrões tratados estão:
 
-``` text
+```text
 ORC-2026-028
 MT-INT-014
 AUD-2026-002
@@ -289,7 +292,7 @@ responder perguntas que exigem cruzamento de informações.
 
 Exemplo:
 
-``` text
+```text
 Qual foi a causa raiz da não conformidade identificada na auditoria AS9100 e quais ações foram definidas para corrigi-la?
 ```
 
@@ -331,19 +334,19 @@ possíveis padrões de prompt injection.
 
 No PowerShell:
 
-``` powershell
+```powershell
 python -m venv env
 ```
 
 ### 2. Ativar o ambiente
 
-``` powershell
+```powershell
 .\env\Scripts\Activate.ps1
 ```
 
 ### 3. Instalar as dependências
 
-``` powershell
+```powershell
 pip install -r requirements.txt
 ```
 
@@ -353,7 +356,7 @@ Crie um arquivo `.env` na raiz do projeto.
 
 Exemplo:
 
-``` env
+```env
 OPENAI_API_KEY=sua_chave_aqui
 ```
 
@@ -365,7 +368,7 @@ Certifique-se de que ele esteja listado no `.gitignore`.
 
 Com o ambiente virtual ativado:
 
-``` powershell
+```powershell
 python src/agent.py
 ```
 
@@ -381,7 +384,7 @@ O agente funciona continuamente pelo terminal.
 
 Exemplo:
 
-``` text
+```text
 ============================================================
 IGNIS SPACE — RAG AGENT
 ============================================================
@@ -399,6 +402,13 @@ Você: sair
 
 Encerrando agente...
 ```
+
+## Notebook de demonstração
+
+O projeto inclui um notebook enxuto para demonstração das principais capacidades do RAG:
+
+````text
+notebooks/demo_rag_ignis_space.ipynb
 
 ## Exemplos de perguntas
 
@@ -420,7 +430,7 @@ Qual é o status atual da ação corretiva PAC-2026-004 e qual não conformidade
 Qual foi a causa raiz da não conformidade identificada na auditoria AS9100 e quais ações foram definidas para corrigi-la?
 
 Quais são os principais riscos operacionais da Ignis Space?
-```
+````
 
 Essas perguntas exercitam recuperação exata, recuperação semântica,
 consulta multi-fonte e síntese de informações distribuídas entre
@@ -443,7 +453,9 @@ histórico do Git represente a evolução da solução:
 9.  persistência do índice vetorial com Chroma;
 10. detecção de alterações e reconstrução automática do índice;
 11. chat interativo no terminal;
-12. documentação e instruções de execução.
+12. documentação e instruções de execução;
+13. memória conversacional de curto prazo;
+14. notebook de demonstração das consultas e memória conversacional.
 
 ## Principais decisões de arquitetura
 
@@ -479,37 +491,37 @@ mais organizado.
 
 ## Tecnologias principais
 
--   Python
--   LangChain
--   LangChain OpenAI
--   Deep Agents
--   Chroma
--   OpenAI Embeddings
--   OpenAI GPT
--   python-dotenv
--   PyPDF
--   python-docx
--   openpyxl
--   python-pptx
+- Python
+- LangChain
+- LangChain OpenAI
+- Deep Agents
+- Chroma
+- OpenAI Embeddings
+- OpenAI GPT
+- python-dotenv
+- PyPDF
+- python-docx
+- openpyxl
+- python-pptx
 
 ## Estado atual
 
 A versão atual implementa um pipeline RAG funcional com:
 
--   ingestão multimodal;
--   metadados;
--   chunking especializado;
--   embeddings;
--   Vector Store persistente;
--   recuperação semântica;
--   recuperação por identificadores;
--   recuperação multi-fonte;
--   análise por subagentes;
--   síntese de respostas;
--   proteção contra instruções presentes nos documentos;
--   detecção de mudanças no corpus;
--   reconstrução automática do índice;
--   interface interativa no terminal.
+- ingestão multimodal;
+- metadados;
+- chunking especializado;
+- embeddings;
+- Vector Store persistente;
+- recuperação semântica;
+- recuperação por identificadores;
+- recuperação multi-fonte;
+- análise por subagentes;
+- síntese de respostas;
+- proteção contra instruções presentes nos documentos;
+- detecção de mudanças no corpus;
+- reconstrução automática do índice;
+- interface interativa no terminal.
 
 O projeto foi estruturado como ambiente de estudo e demonstração de
 técnicas de RAG aplicadas a uma base documental empresarial fictícia.
