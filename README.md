@@ -8,6 +8,18 @@ O agente consulta documentos internos de diferentes áreas da
 organização, recupera os trechos mais relevantes e utiliza um modelo de
 linguagem para sintetizar respostas fundamentadas no corpus.
 
+## Deploy
+
+A aplicação está disponível publicamente no Render:
+
+**[Acessar Ignis Space — RAG](https://rag-ignis-space.onrender.com)**
+
+Para fins de demonstração e validação do deploy, foi implementada uma interface web simples e funcional utilizando Gradio. A interface reutiliza o agente RAG desenvolvido em `src/agent.py`, permitindo realizar consultas à base documental de forma interativa.
+
+### Evidência de execução
+
+![Aplicação Ignis Space RAG em execução no Render](docs/images/render-rag-ignis.png)
+
 ## Objetivo
 
 O projeto foi desenvolvido para explorar, de forma incremental,
