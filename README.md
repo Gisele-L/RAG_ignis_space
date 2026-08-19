@@ -419,14 +419,13 @@ Encerrando agente...
 
 O projeto inclui um notebook enxuto para demonstração das principais capacidades do RAG:
 
-````text
+```text
 notebooks/demo_rag_ignis_space.ipynb
 
 ## Exemplos de perguntas
 
 Consultas úteis para validar diferentes comportamentos do RAG:
 
-``` text
 Qual é o valor total da proposta ORC-2026-028?
 
 Qual é o valor total da proposta ORC-2026-031?
@@ -442,7 +441,7 @@ Qual é o status atual da ação corretiva PAC-2026-004 e qual não conformidade
 Qual foi a causa raiz da não conformidade identificada na auditoria AS9100 e quais ações foram definidas para corrigi-la?
 
 Quais são os principais riscos operacionais da Ignis Space?
-````
+```
 
 Essas perguntas exercitam recuperação exata, recuperação semântica,
 consulta multi-fonte e síntese de informações distribuídas entre
@@ -467,7 +466,8 @@ histórico do Git represente a evolução da solução:
 11. chat interativo no terminal;
 12. documentação e instruções de execução;
 13. memória conversacional de curto prazo;
-14. notebook de demonstração das consultas e memória conversacional.
+14. notebook de demonstração das consultas e memória conversacional;
+15. deploy da aplicação em ambiente de nuvem utilizando Render, com acesso público e evidência de execução.
 
 ## Principais decisões de arquitetura
 
